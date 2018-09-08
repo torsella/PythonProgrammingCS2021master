@@ -1,0 +1,9 @@
+# Add in your keys and tokens.
+ACCESS_TOKEN = "234406...."
+ACCESS_TOKEN_SECRET = "Y6qEHV....."
+CONSUMER_KEY = "OtN1YY6......"
+CONSUMER_KEY_SECRET = "sZIKeft......"
+
+def getKeys():
+    return (ACCESS_TOKEN, ACCESS_TOKEN_SECRET, CONSUMER_KEY, CONSUMER_KEY_SECRET)
+

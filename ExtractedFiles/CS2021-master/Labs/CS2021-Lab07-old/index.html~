@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!-- modified from url=(0037)http://cs61a.org/lab/lab03/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="CS:2021 Python Programming">
+  <meta name="author" content="cs2021">
+
+  <meta name="viewport" content="width=device-width">
+
+  <script src="jquery.min.js"></script>
+  <script src="bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="icon" href="favicon.ico">
+
+  <link rel="stylesheet" href="mono-blue.css">
+  <script src="highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="resource.css">
+
+  <link rel="stylesheet" type="text/css" href="lab.css">
+
+
+  <title>Lab 7: Setting up a Python Project using Twitter API | CS 2021 Fall 2017</title>
+
+  </head>
+
+  <body id="index" class="home">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-section">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../index.html">CS 2021</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbar-collapse-section">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="./index.html">Calendar</a></li>
+            <li><a href="./office-hours.html">Office Hours</a></li>
+            <li><a href="./tutoring.html">Tutoring</a></li>
+            <li class="dropdown">
+              <a href="../lab01.1#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Course Info <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="../../articles/about.html">Syllabus</a></li>
+                <li><a href="../../staff.html">Staff</a></li>
+                <li><a href="../../weekly.html">Weekly Schedule</a></li>
+              </ul>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div id="content" class="container">
+      <div class='row'>
+        <div class='col-md-9'>
+          <div class='page-header'>
+            <h1><span class="content-title-brand">Lab 7: Setting up a Python Project using Twitter API </h1>
+          </div>
+
+          <p><i>Due at end of this week.</i></p>
+
+
+       
+
+
+
+
+          <h2 id="introduction">Introduction</h2>
+
+
+          <p>This lab explains how to create python projects using virtualenv and how to access public APIs. In this lab we will focus on using Twitter's public API to download tweets in real time.  </p>
+
+
+          <h3 id="handling-errors">Handling Errors </h3>
+           
+While working with public APIs, bad things are bound to happen. Servers can crash and internet connections can fail. In the event that something goes wrong, purposely or not, programs needs to be able handle erros gracefully. Python is able to handle errors and exceptions. We use both the try and except statements. 
+A minimal example is given below.
+<pre><code>
+>>> try:
+...     print(spam)
+... except:
+...     print("spam isn't defined!")
+...
+spam isn't defined!
+
+</code></pre>
+
+  <p>
+
+  If any code within the try statement causes an error, execution of the code will stop and jump to the except statement. Here it will execute the code and if, for any reason, there's an error within the except statement, you'll get the message During handling of the above exception, another exception occurred. You should be careful not to put any code that could cause an error within the except statement.
+
+
+
+<h3 id="installing-a-terminal">Setting up a Project Directory</h3>
+
+
+          <p>
+   Open your shell and set up a project home directory. This is where we will keep all of our files. Now we will use Virtualenv to create our virtual environment to install things that will help us access Twitter API. Note that if you are using a Windows shell these commands may be slightly different. 
+
+Basic Startup Instructions (tested for Mac-OSX)
+
+<pre><code> 
+$ python3 -m venv my-virtualenv
+$ source my-virtualenv/bin/activate
+$ pip3 install matplotlib
+$ python3
+>>> import matplotlib.pyplot as plt
+>>> plt.plot([1,2,3,4])
+>>> plt.show()
+</pre></code>
+
+
+Basic Startup Instructions for Windows (tested for Win10)
+
+
+On Windows, invoke the venv and activate commands as follows:
+<pre><code>
+c:\>c:\Python35\python -m venv c:\path\to\myenv
+c:\>c:\path\to\myenv\Scripts\activate.bat
+c:\>c:\Python35\pip install matplotlib
+c:\> py -i  
+</code></pre>
+
+<p>
+This will create an environment called (env).
+You should see (env) to the left of your bash user name. This means that you are now in our virtualenv environment and can install libraries for our project that won’t conflict with any other versions of Python or Python libraries on our computer.
+
+<p>
+
+The command "pip freeze" let’s you see all the libraries that are installed into our environment. 
+
+<pre><code>
+$ pip freeze
+$ pip install tweepy
+$ pip freeze >> requirements.txt
+</code></pre>
+
+<p>
+  This will install Tweepy into our environment. It will handle a lot of the messy Twitter stuff like authentication for us. The second command will execute the freeze command and save the output in a file called requirements.txt for use in recreating our environment on other machines. 
+
+<p>
+  Setting up a Twitter Application is very quick and easy. Create an account or log into whatever account you would like to have your program tweet from. You can go to the Twitter Application page to start the process of creating an application that is allowed to use your account. Click on the “Create A New App” button and fill out the form. Make sure your app has read and write permissions. Once you fill out the form, go to the tab at the top that says “Keys and Access Tokens.”; This is used for authentication that lets our app access Twitter. Don’t give these keys out! Anybody who has these keys can access your application.
+
+<p>
+  At the bottom of this page click the “Create my access tokens” button. Make note of your Consumer Key, Consumer Secret Key, Access Token, and Access Secret Token. Create a Python file called twitterKeys.py and add the following code:
+                        
+                  
+<pre><code>
+  
+# Add in your keys and tokens.
+ACCESS_TOKEN = "..."
+ACCESS_TOKEN_SECRET = "..."
+CONSUMER_KEY = "..."
+CONSUMER_KEY_SECRET = "..."
+ 
+def getKeys():
+    return (ACCESS_TOKEN, ACCESS_TOKEN_SECRET, CONSUMER_KEY, CONSUMER_KEY_SECRET)
+
+</code></pre>
+<p>
+
+Here we add in our keys and provide a method to return them in a tuple. I chose to do this because we can easily copy and paste new keys in the global variables above and not have to change any code. It also lets me use the keys in my app and keep them hidden away at the same time!
+
+We’re going to use these keys to get all tweets every from @realDonaldTrump to create a system to randomly generate Trump-isms for our Twitter Bot. Launch the Python shell and type the following code:
+
+<pre><code>
+  
+import tweepy
+from twitterKeys import getKeys
+ 
+access_token, access_secret, consumer_key, consumer_secret = getKeys()
+ 
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_secret)
+api = tweepy.API(auth)
+
+</code></pre>
+
+<p>
+
+This is all we need to interact with Twitter in Python. First we import Tweepy to handle authentication and interaction with Twitter. Second we unpack the tuple from the code we wrote in “twitterKeys” to load the keys into our variables. Finally we create a Tweepy OAuthHandler object to load in our keys, and use it to create our Tweepy API object. We will access Twitter exclusively through this newly created api object. To read more about authentication with Tweepy and more check out the Tweepy Documentation.
+
+Let’s test out the API to make sure it’s working.
+<pre><code>
+$ python
+> api.home_timeline()
+> api.user_timeline("@realDonaldTrump")
+</code></pre>
+
+<p>
+This is an example of how we can use the “api” object to access twitter. These are a few examples of how we can see the timeline of the account associated with the keys, or access a sample of tweets from a use of our choosing. The data won’t look very pretty. It will be a nasty mess of nested JSON. We will deal with that later.
+
+Add the code we typed into the Python shell into a file called api.py . Add the following code to this file:
+                        
+<pre><code>
+import tweepy
+from twitterKeys import getKeys
+
+def getAPI():
+  access_token, access_secret, consumer_key, consumer_secret = getKeys()
+  auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+  auth.set_access_token(access_token, access_secret)
+  api = tweepy.API(auth)
+
+  return api
+</code></pre>
+
+<p>
+Now we have this getAPI() function ready to go anytime we need to use our Twitter API. This will certainly come in handy later.
+Getting Our Tweets
+
+If this is your first time working with 3rd Party API’s you’ll realize that these companies guard their data fiercely. They have limits on how much you can access and how often you can ask for data. So we’ll have to be cautious about what we ask from the API and how often we do it. Create a file called getTweets.py and enter the following code:
+       
+<pre><code>      
+from sys import argv
+from api import getAPI
+ 
+def main():
+    try:
+        print(argv[1])
+    except IndexError:
+        print("Program Missing Arg. Twitter Handle")
+    except Exception as e:
+        print("Program Failure.  Error: {}".format(e))
+ 
+if __name__ == '__main__':
+    main()
+
+</code></pre>
+
+<p>
+Run the program with the following command:
+                        
+<pre><code>
+  
+$ python getTweets.py [screen name]
+</code></pre>
+
+<p>
+The sys module stores the file name in argv[0] , and any other arguments from the command line after.
+<p>
+Because we are working with an API that could possibly break or return errors, I put the main statement in a try/except block. If something breaks, we’ll get to see what error occurred because of the print statement. Go ahead and try it out. You should see the program print out whatever string you entered. If you try to execute the program without an argument, you’ll see the IndexError message. 
+<p>
+We'd like to use our API to get as many tweets as possible. However, this API is only capable of taking so many requests and returning so much data per a 15 minute window according to the Twitter Documentation on Rate Limiting. So to be safe we’ll try to delay each call 5 seconds, and we should be able to avoid having our requests denied due to rate limits. Open up getTweets.py and make the following changes:
+
+<pre><code>
+from sys import argv
+import time
+ 
+from api import getAPI
+ 
+REQUEST_DELAY = 5
+MAX_REQUESTS = 10
+ 
+def main():
+    try:
+        arg = argv[1]
+        api = getAPI()
+        tweetResults = []
+ 
+        tweetIndex = api.user_timeline(screen_name=arg, count=1)[0].id
+        time.sleep(REQUEST_DELAY)
+        for request in range(MAX_REQUESTS):
+            tweets = api.user_timeline(screen_name=arg, include_retweets=False, max_id=tweetIndex)
+            for tweet in tweets:
+                tweetResults.append(tweet.text)
+                tweetIndex = tweet.id
+            time.sleep(REQUEST_DELAY)
+        print(tweetResults)
+        print(len(tweetResults))
+ 
+    except IndexError:
+        print("Program Missing Arg. Twitter Handle")
+    except Exception as e:
+        print("Program Failure. Error: {}".format(e))
+ 
+if __name__ == '__main__':
+    main()
+
+</code></pre>
+
+Run your code to download a collection of tweets.
+The submission requirement for this lab is to simply upload the file of tweets obtained
+from your favorite Twitter personality.
+<p>
+
+
+
+         
+
+      <script>
+        $('.sidebar ul').addClass('nav nav-stacked');
+        $('body').scrollspy({
+          target: '.sidebar',
+          offset: 40
+        });
+      </script>
+
+
+      <script src="./jquery-latest.js"></script>
+
+      <script>
+        $(function() {
+          if (new Date("06/21/2016") < new Date()) {
+            $('.toggleButton').css('display', 'inline-block');
+            $('.toggleButton').click(function() {
+              var solution_id = $(this).attr('id');
+              $('div.' + solution_id).slideToggle(600);
+            });
+          }
+          // Always display these toggle buttons
+          $('.toggleButton.toggle').css('display', 'inline-block');
+          $('.toggleButton.toggle').click(function() {
+            var solution_id = $(this).attr('id');
+            $('div.' + solution_id).slideToggle(600);
+          });
+        });
+      </script>
+
+
+      </body></html>

@@ -1,0 +1,21 @@
+The ancient Egyptians could easily handle simple fractions, but with one
+remarkable peculiarity. The only fractions they used were 2/3 and the
+reciprocals of the integers, the so-called unit fractions (1/n)  with each
+numerator equal to 1.
+
+Curious though this treatment of fractions may seem to us, no doubt it
+seemed both natural and easy to the ancients. Thus their answer to the problem, 
+'divide seven loaves among ten men' was not 7/10 of a loaf each, 
+but the sum of fraction 1/2 + 1/5.
+
+Can all proper fractions be expressed as the sum of unit fractions,
+without repetition? Yes, as Fibonacci showed in his Liber Abaci,
+where he described what is now called the greedy algorithm. The greedy 
+algorithm is to subtract the largest possible unit fraction, then do the same again, and so on.
+
+Sylvester proved in 1880 that applying this greedy algorithm to the
+fraction p/q, where p is less than q, produces a sequence of terms with no more
+than p unit fractions.
+
+Write a python program from scratch which reads two integers p and q from the command line
+and outputs a listing representing a sum of no more than p unit fractions, with sum equal to p/q.

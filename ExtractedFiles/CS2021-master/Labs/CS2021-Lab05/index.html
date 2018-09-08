@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<!-- modified from url=(0037)http://cs61a.org/lab/lab03/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="CS:2021 Python Programming">
+  <meta name="keywords" content="CS2021, EECS">
+  <meta name="author" content="cs2021">
+
+  <meta name="viewport" content="width=device-width">
+
+  <script src="jquery.min.js"></script>
+  <script src="bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="icon" href="favicon.ico">
+
+  <link rel="stylesheet" href="mono-blue.css">
+  <script src="highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="resource.css">
+
+  <link rel="stylesheet" type="text/css" href="lab.css">
+
+
+  <title>Lab 5: Linked Lists  | CS 2021 Fall 2018</title>
+
+  </head>
+
+  <body id="index" class="home">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-section">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../index.html">CS 2021</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbar-collapse-section">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="./index.html">Calendar</a></li>
+            <li><a href="./office-hours.html">Office Hours</a></li>
+            <li><a href="./tutoring.html">Tutoring</a></li>
+
+            <li class="dropdown">
+              <a href="../lab01.1#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Course Info <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="../../articles/about.html">Syllabus</a></li>
+                <li><a href="../../staff.html">Staff</a></li>
+                <li><a href="../../weekly.html">Weekly Schedule</a></li>
+              </ul>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+ 
+
+    <div id="content" class="container">
+      <div class='row'>
+        <div class='col-md-9'>
+          <div class='page-header'>
+            <h1><span class="content-title-brand">Lab 5</span>: Linked Lists</h1>
+          </div>
+
+          <p><i>Due at 11:59pm on Friday.</i></p>
+
+          <h2 id='starter-files'>Starter Files</h2>
+
+          <p>Download <a href="./lab05.py">lab05.py</a>.
+</p>
+
+
+
+          <ul>
+            <li>To receive credit for this lab, you must complete Questions 1, 2, 3, and 4.</li>
+            <li>Questions 5 and 6 are <em>extra practice</em>. They can be found in
+              the <a href="./lab05-extra.py">lab05-extra.py</a> file. It is recommended that you
+              complete these problems on your own time.</li>
+          </ul>
+
+
+
+
+
+          <h2 id="linked-lists">Linked Lists</h2>
+
+
+          <p>Python has many built-in types of sequences: lists, ranges, and strings, to name
+            a few. In this lab, we instead construct our own type of sequence called a
+            <em>linked list</em>. A linked list is a simple type of sequence that is comprised of
+            multiple <em>links</em> that are connected.</p>
+
+          <p><img class="img-responsive center-block" src="example-link.png" alt="Linked List" title="Linked List"></p>
+
+          <p>Each <code>link</code> is a pair where the <code>first</code> element is an item in the linked list,
+            and the <code>second</code> element is another <code>link</code>.</p>
+
+          <ul>
+            <li><p>Constructors:</p>
+
+              <ul>
+                <li><code>link(first, rest)</code>: Construct a linked list with <code>first</code> element
+                  and the next link <code>rest</code>.</li>
+                <li><code>empty</code>: The empty linked list.</li>
+              </ul></li>
+            <li><p>Selectors</p>
+
+              <ul>
+                <li><code>first(s)</code>: Returns the first element in the given linked list <code>s</code>.</li>
+                <li><code>rest(s)</code>: Returns the rest of the linked list <code>s</code>.</li>
+              </ul></li>
+            <li><p>Other</p>
+
+              <ul>
+                <li><code>is_link(s)</code>:  Returns <code>True</code> if <code>s</code> is a linked list.</li>
+                <li><code>print_link(s)</code>: Prints out the linked list <code>s</code>.</li>
+              </ul></li>
+          </ul>
+
+          <p>We can construct the Linked list shown above by using the constructors.  The
+            <code>first</code> element of this Linked list is 12 while the <code>rest</code> is another Linked
+            list that contains 99 and 37:</p>
+
+          <pre><code>&gt;&gt;&gt; x = link(12, link(99, link(37)))
+&gt;&gt;&gt; first(x)
+12
+&gt;&gt;&gt; first(rest(x))
+99
+&gt;&gt;&gt; first(rest(rest(x)))
+37</code></pre>
+
+          <blockquote><p>Notice that we can just use <code>link(37)</code> instead <code>link(37, empty)</code>. This is
+            because the second argument of the <code>link</code> constructor has a default argument of
+            <code>empty</code>.</p></blockquote>
+
+          <h3 class="question" id="q1">Question 1: Length</h3>
+
+          <p>Implement the <code>len_link(lst)</code> function, which calculates the length of a linked
+            list.</p>
+
+
+
+          <pre><code>def len_link(lst):
+    &quot;&quot;&quot;Returns the length of the link.
+
+    &gt;&gt;&gt; lst = link(1, link(2, link(3, link(4))))
+    &gt;&gt;&gt; len_link(lst)
+    4
+    &gt;&gt;&gt; len_link(empty)
+    0
+    &quot;&quot;&quot;
+<div class="alt 0">    "*** YOUR CODE HERE ***"
+</div><div class="solution 0">&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#x20;&#x2b;&#x20;&#x6c;&#x65;&#x6e;&#x5f;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;</div></code></pre>
+
+
+          <button id='0' class='toggleButton'>
+            Toggle Solution<noscript> (enable JavaScript)</noscript>
+          </button>
+
+
+          <p>Test your code:</p><pre><code>python3 -i lab05.py
+python3 -m doctest -v lab05.py  </code></pre>
+
+          <h3 class="questiKn" id="q2">Question 2: Sum</h3>
+
+          <p>Write a function that takes in a linked list <code>lst</code> and a function <code>fn</code> which
+            is applied to each number in <code>lst</code> and returns the sum.</p>
+
+
+
+          <pre><code>def sum_linked_list(lst, fn):
+    &quot;&quot;&quot; Applies a function FN to each number in LST and returns the sum
+    of the resulting values
+
+    &gt;&gt;&gt; square = lambda x: x * x
+    &gt;&gt;&gt; double = lambda y: 2 * y
+    &gt;&gt;&gt; lst1 = link(1, link(2, link(3, link(4))))
+    &gt;&gt;&gt; sum_linked_list(lst1, square)
+    30
+    &gt;&gt;&gt; lst2 = link(3, link(5, link(4, link(10))))
+    &gt;&gt;&gt; sum_linked_list(lst2, double)
+    44
+    &quot;&quot;&quot;
+<div class="alt 1">    "*** YOUR CODE HERE ***"
+</div><div class="solution 1">&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x66;&#x6e;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x20;&#x2b;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x28;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x2c;&#x20;&#x66;&#x6e;&#x29;&#xa;&#xa;&#x23;&#x20;&#x49;&#x74;&#x65;&#x72;&#x61;&#x74;&#x69;&#x76;&#x65;&#x20;&#x53;&#x6f;&#x6c;&#x75;&#x74;&#x69;&#x6f;&#x6e;&#xa;&#x64;&#x65;&#x66;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x2c;&#x20;&#x66;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x73;&#x75;&#x6d;&#x20;&#x3d;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x21;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x75;&#x6d;&#x20;&#x2b;&#x3d;&#x20;&#x66;&#x6e;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x73;&#x75;&#x6d;</div></code></pre>
+
+
+          <button id='1' class='toggleButton'>
+            Toggle Solution<noscript> (enable JavaScript)</noscript>
+          </button>
+
+
+          <p>Test your code:</p><pre><code>python3 -i lab05.py
+python3 -m doctest -v lab05.py  </code></pre>
+
+
+          <h3 class="question" id="q3">Question 3: Map</h3>
+
+          <p>Write <code>map</code>, which takes a one argument function and a linked list as
+            arguments, and returns a linked list of the results produced by applying the
+            procedure to each element in the list.</p>
+
+
+
+          <pre><code>def map(fn, lst):
+    &quot;&quot;&quot;Returns a list of the results produced by applying f to each
+    element in lst.
+
+    &gt;&gt;&gt; my_list = link(1, link(2, link(3, link(4, empty))))
+    &gt;&gt;&gt; print_link(map(lambda x: x * x, my_list))
+    1 4 9 16
+    &gt;&gt;&gt; pokemon = link(&#x27;bulbasaur&#x27;, link(&#x27;charmander&#x27;, link(&#x27;squirtle&#x27;, empty)))
+    &gt;&gt;&gt; print_link(map(print, pokemon))
+    bulbasaur
+    charmander
+    squirtle
+    None None None
+    &quot;&quot;&quot;
+<div class="alt 2">    "*** YOUR CODE HERE ***"
+</div><div class="solution 2">&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x66;&#x6e;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x2c;&#x20;&#x6d;&#x61;&#x70;&#x28;&#x66;&#x6e;&#x2c;&#x20;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;</div></code></pre>
+
+
+          <button id='2' class='toggleButton'>
+            Toggle Solution<noscript> (enable JavaScript)</noscript>
+          </button>
+
+
+          <p>Test your code:</p><pre><code>python3 -i lab05.py
+python3 -m doctest -v lab05.py  </code></pre>
+
+
+          <h3 class="question" id="q4">Question 4: Insert</h3>
+
+          <p>Implement the <code>insert</code> function that inserts an item at a specific
+            index in the linked list. If the index is greater than the current length,
+            you should insert the item at the end of the list.</p>
+
+          <p><em>Hint</em>: This will be much easier to implement using recursion, rather
+            than using iteration!</p>
+
+          <p><em>Note</em>: We are not actually inserting the item into the <em>original</em> linked
+            list. Instead, we are creating a copy of the original linked list, but
+            with the provided item added at the specified index. The original linked
+            list stays the same.</p>
+
+
+
+          <pre><code>def insert(lst, item, index):
+    &quot;&quot;&quot; Returns a link matching lst but with the given item inserted at the
+    specified index. If the index is greater than the current length, the item
+    is appended to the end of the list.
+
+    &gt;&gt;&gt; lst = link(1, link(2, link(3)))
+    &gt;&gt;&gt; new = insert(lst, 9001, 1)
+    &gt;&gt;&gt; print_link(new)
+    1 9001 2 3
+    &quot;&quot;&quot;
+<div class="alt 3">    "*** YOUR CODE HERE ***"
+</div><div class="solution 3">&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x69;&#x74;&#x65;&#x6d;&#x2c;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x69;&#x6e;&#x64;&#x65;&#x78;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x69;&#x74;&#x65;&#x6d;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x2c;&#x20;&#x69;&#x6e;&#x73;&#x65;&#x72;&#x74;&#x28;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x2c;&#x20;&#x69;&#x74;&#x65;&#x6d;&#x2c;&#x20;&#x69;&#x6e;&#x64;&#x65;&#x78;&#x2d;&#x31;&#x29;&#x29;</div></code></pre>
+
+
+          <button id='3' class='toggleButton'>
+            Toggle Solution<noscript> (enable JavaScript)</noscript>
+          </button>
+
+          <p>Test your code:</p><pre><code>python3 -i lab05.py
+python3 -m doctest -v lab05.py  </code></pre>
+
+
+
+          <h2 id="extra-questions">Extra Questions</h2>
+
+
+          <blockquote><p>The following questions are for <strong>extra practice</strong> &mdash; they can be found in the
+            the <a href="./lab05-extra.py">lab05-extra.py</a> file. It is recommended that you complete
+            these problems on your own time.</p></blockquote>
+
+          <h3 class="question" id="q5">Question 5: DNA Sequence Matching</h3>
+
+          <p>The mad scientist John Harvey Hilfinger has discovered a gene that compels
+            people to enroll in CS2021. You may be afflicted!</p>
+
+          <p>A DNA sequence is represented as a linked list of elements <code>A</code>, <code>G</code>, <code>C</code> or
+            <code>T</code>. This discovered gene has sequence <code>C A T C A T</code>. Write a
+            function <code>has_2021_gene</code> that takes a DNA sequence and returns whether it
+            contains the 2021 gene as a sub-sequence.</p>
+
+          <p>First, write a function <code>has_prefix</code> that takes two linked lists, <code>s</code> and
+            <code>prefix</code>, and returns whether <code>s</code> starts with the elements of <code>prefix</code>. Note
+            that <code>prefix</code> may be larger than <code>s</code>, in which case the function should return
+            <code>False</code>.</p>
+
+
+
+          <pre><code>def has_prefix(s, prefix):
+    &quot;&quot;&quot;Returns whether prefix appears at the beginning of linked list s.
+
+    &gt;&gt;&gt; x = link(3, link(4, link(6, link(6))))
+    &gt;&gt;&gt; print_link(x)
+    3 4 6 6
+    &gt;&gt;&gt; has_prefix(x, empty)
+    True
+    &gt;&gt;&gt; has_prefix(x, link(3))
+    True
+    &gt;&gt;&gt; has_prefix(x, link(4))
+    False
+    &gt;&gt;&gt; has_prefix(x, link(3, link(4)))
+    True
+    &gt;&gt;&gt; has_prefix(x, link(3, link(3)))
+    False
+    &gt;&gt;&gt; has_prefix(x, x)
+    True
+    &gt;&gt;&gt; has_prefix(link(2), link(2, link(3)))
+    False
+    &quot;&quot;&quot;
+<div class="alt 4">    "*** YOUR CODE HERE ***"
+</div><div class="solution 4">&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x70;&#x72;&#x65;&#x66;&#x69;&#x78;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x54;&#x72;&#x75;&#x65;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x73;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x46;&#x61;&#x6c;&#x73;&#x65;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x73;&#x29;&#x20;&#x3d;&#x3d;&#x20;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x70;&#x72;&#x65;&#x66;&#x69;&#x78;&#x29;&#x20;&#x61;&#x6e;&#x64;&#x20;&#x68;&#x61;&#x73;&#x5f;&#x70;&#x72;&#x65;&#x66;&#x69;&#x78;&#x28;&#x72;&#x65;&#x73;&#x74;&#x28;&#x73;&#x29;&#x2c;&#x20;&#x72;&#x65;&#x73;&#x74;&#x28;&#x70;&#x72;&#x65;&#x66;&#x69;&#x78;&#x29;&#x29;</div></code></pre>
+
+
+          <button id='4' class='toggleButton'>
+            Toggle Solution<noscript> (enable JavaScript)</noscript>
+          </button>
+
+          <p>Test your code:</p><pre><code>python3 -i lab05.py
+python3 -m doctest -v lab05.py  </code></pre>
+
+          <p>Next, write a function <code>has_sublist</code> that takes two linked lists, <code>s</code> and
+            <code>sublist</code>, and returns whether the elements of <code>sublist</code> appear in order
+            anywhere within <code>s</code>.</p>
+
+
+
+          <pre><code>def has_sublist(s, sublist):
+    &quot;&quot;&quot;Returns whether sublist appears somewhere within linked list s.
+
+    &gt;&gt;&gt; has_sublist(empty, empty)
+    True
+    &gt;&gt;&gt; aca = link(&#x27;A&#x27;, link(&#x27;C&#x27;, link(&#x27;A&#x27;)))
+    &gt;&gt;&gt; x = link(&#x27;G&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;, link(&#x27;T&#x27;, aca))))
+    &gt;&gt;&gt; print_link(x)
+    G A T T A C A
+    &gt;&gt;&gt; has_sublist(x, empty)
+    True
+    &gt;&gt;&gt; has_sublist(x, link(2, link(3)))
+    False
+    &gt;&gt;&gt; has_sublist(x, link(&#x27;G&#x27;, link(&#x27;T&#x27;)))
+    False
+    &gt;&gt;&gt; has_sublist(x, link(&#x27;A&#x27;, link(&#x27;T&#x27;, link(&#x27;T&#x27;))))
+    True
+    &gt;&gt;&gt; has_sublist(link(1, link(2, link(3))), link(2))
+    True
+    &gt;&gt;&gt; has_sublist(x, link(&#x27;A&#x27;, x))
+    False
+    &quot;&quot;&quot;
+<div class="alt 5">    "*** YOUR CODE HERE ***"
+</div><div class="solution 5">&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x68;&#x61;&#x73;&#x5f;&#x70;&#x72;&#x65;&#x66;&#x69;&#x78;&#x28;&#x73;&#x2c;&#x20;&#x73;&#x75;&#x62;&#x6c;&#x69;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x54;&#x72;&#x75;&#x65;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x73;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x46;&#x61;&#x6c;&#x73;&#x65;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x68;&#x61;&#x73;&#x5f;&#x73;&#x75;&#x62;&#x6c;&#x69;&#x73;&#x74;&#x28;&#x72;&#x65;&#x73;&#x74;&#x28;&#x73;&#x29;&#x2c;&#x20;&#x73;&#x75;&#x62;&#x6c;&#x69;&#x73;&#x74;&#x29;</div></code></pre>
+
+
+          <button id='5' class='toggleButton'>
+            Toggle Solution<noscript> (enable JavaScript)</noscript>
+          </button>
+
+          <p>Test your code:</p><pre><code>python3 -i lab05.py
+python3 -m doctest -v lab05.py  </code></pre>
+
+
+          <p>Finally, write <code>has_2021_gene</code> to detect <code>C A T C A T</code> within a linked list
+            <code>dna</code> sequence.</p>
+
+
+
+          <pre><code>def has_2021_gene(dna):
+    &quot;&quot;&quot;Returns whether linked list dna contains the CATCAT gene.
+
+    &gt;&gt;&gt; dna = link(&#x27;C&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;)))
+    &gt;&gt;&gt; dna = link(&#x27;C&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;, link(&#x27;G&#x27;, dna))))
+    &gt;&gt;&gt; print_link(dna)
+    C A T G C A T
+    &gt;&gt;&gt; has_2021_gene(dna)
+    False
+    &gt;&gt;&gt; end = link(&#x27;T&#x27;, link(&#x27;C&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;, link(&#x27;G&#x27;)))))
+    &gt;&gt;&gt; dna = link(&#x27;G&#x27;, link(&#x27;T&#x27;, link(&#x27;A&#x27;, link(&#x27;C&#x27;, link(&#x27;A&#x27;, end)))))
+    &gt;&gt;&gt; print_link(dna)
+    G T A C A T C A T G
+    &gt;&gt;&gt; has_2021_gene(dna)
+    True
+    &gt;&gt;&gt; has_2021_gene(end)
+    False
+    &quot;&quot;&quot;
+<div class="alt 6">    "*** YOUR CODE HERE ***"
+</div><div class="solution 6">&#x20;&#x20;&#x20;&#x20;&#x63;&#x61;&#x74;&#x20;&#x3d;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x27;&#x43;&#x27;&#x2c;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x27;&#x41;&#x27;&#x2c;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x27;&#x54;&#x27;&#x29;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x63;&#x61;&#x74;&#x63;&#x61;&#x74;&#x20;&#x3d;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x27;&#x43;&#x27;&#x2c;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x27;&#x41;&#x27;&#x2c;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x27;&#x54;&#x27;&#x2c;&#x20;&#x63;&#x61;&#x74;&#x29;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x68;&#x61;&#x73;&#x5f;&#x73;&#x75;&#x62;&#x6c;&#x69;&#x73;&#x74;&#x28;&#x64;&#x6e;&#x61;&#x2c;&#x20;&#x63;&#x61;&#x74;&#x63;&#x61;&#x74;&#x29;</div></code></pre>
+
+
+          <button id='6' class='toggleButton'>
+            Toggle Solution<noscript> (enable JavaScript)</noscript>
+          </button>
+
+          <p>Test your code:</p><pre><code>python3 -i lab05.py
+python3 -m doctest -v lab05.py  </code></pre>
+
+          <p>Note:  Subsequence matching is a problem of importance in computational
+            biology. </p>
+
+          <h3 class="question" id="q6">Question 6: Count Change (with Linked Lists!)</h3>
+
+          <p>A set of coins makes change for <code>n</code> if the sum of the values of the
+            coins is <code>n</code>.  For example, if you have 1-cent, 2-cent and 4-cent
+            coins, the following sets make change for <code>7</code>:</p>
+
+          <ul>
+            <li>7 1-cent coins</li>
+            <li>5 1-cent, 1 2-cent coins</li>
+            <li>3 1-cent, 2 2-cent coins</li>
+            <li>3 1-cent, 1 4-cent coins</li>
+            <li>1 1-cent, 3 2-cent coins</li>
+            <li>1 1-cent, 1 2-cent, 1 4-cent coins</li>
+          </ul>
+
+          <p>Thus, there are 6 ways to make change for <code>7</code>.  Write a function
+            <code>count_change</code> that takes a positive integer <code>n</code> and a linked list of
+            the coin denominations and returns the number of ways to make change
+            for <code>n</code> using these coins:</p>
+
+
+
+          <pre><code>def count_change(amount, denominations):
+    &quot;&quot;&quot;Returns the number of ways to make change for amount.
+
+    &gt;&gt;&gt; denominations = link(50, link(25, link(10, link(5, link(1)))))
+    &gt;&gt;&gt; print_link(denominations)
+    50 25 10 5 1
+    &gt;&gt;&gt; count_change(7, denominations)
+    2
+    &gt;&gt;&gt; count_change(100, denominations)
+    292
+    &gt;&gt;&gt; denominations = link(16, link(8, link(4, link(2, link(1)))))
+    &gt;&gt;&gt; print_link(denominations)
+    16 8 4 2 1
+    &gt;&gt;&gt; count_change(7, denominations)
+    6
+    &gt;&gt;&gt; count_change(10, denominations)
+    14
+    &gt;&gt;&gt; count_change(20, denominations)
+    60
+    &quot;&quot;&quot;
+<div class="alt 7">    "*** YOUR CODE HERE ***"
+</div><div class="solution 7">&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x61;&#x6d;&#x6f;&#x75;&#x6e;&#x74;&#x20;&#x3c;&#x20;&#x30;&#x20;&#x6f;&#x72;&#x20;&#x64;&#x65;&#x6e;&#x6f;&#x6d;&#x69;&#x6e;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x73;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x61;&#x6d;&#x6f;&#x75;&#x6e;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x5f;&#x63;&#x6f;&#x69;&#x6e;&#x20;&#x3d;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x5f;&#x63;&#x68;&#x61;&#x6e;&#x67;&#x65;&#x28;&#x61;&#x6d;&#x6f;&#x75;&#x6e;&#x74;&#x20;&#x2d;&#x20;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x64;&#x65;&#x6e;&#x6f;&#x6d;&#x69;&#x6e;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x73;&#x29;&#x2c;&#x20;&#x64;&#x65;&#x6e;&#x6f;&#x6d;&#x69;&#x6e;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x73;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x6e;&#x6f;&#x74;&#x5f;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x5f;&#x63;&#x6f;&#x69;&#x6e;&#x20;&#x3d;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x5f;&#x63;&#x68;&#x61;&#x6e;&#x67;&#x65;&#x28;&#x61;&#x6d;&#x6f;&#x75;&#x6e;&#x74;&#x2c;&#x20;&#x72;&#x65;&#x73;&#x74;&#x28;&#x64;&#x65;&#x6e;&#x6f;&#x6d;&#x69;&#x6e;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x73;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x5f;&#x63;&#x6f;&#x69;&#x6e;&#x20;&#x2b;&#x20;&#x6e;&#x6f;&#x74;&#x5f;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x5f;&#x63;&#x6f;&#x69;&#x6e;</div></code></pre>
+
+
+          <button id='7' class='toggleButton'>
+            Toggle Solution<noscript> (enable JavaScript)</noscript>
+          </button>
+
+
+
+        </div>
+
+        <div class='col-md-3'>
+          <nav class='hidden-print hidden-sm hidden-xs sidebar'>
+            <ul>
+              <li><a href="index.html#linked-lists">Linked Lists</a></li>
+              <ul>
+                <li><a href="index.html#q1">Question 1: Length</a></li>
+                <li><a href="index.html#q2">Question 2: Sum</a></li>
+                <li><a href="index.html#q3">Question 3: Map</a></li>
+                <li><a href="index.html#q4">Question 4: Insert</a></li>
+              </ul>
+
+              <li><a href="index.html#extra-questions">Extra Questions</a></li>
+              <ul>
+                <li><a href="index.html#q5">Question 5: DNA Sequence Matching</a></li>
+                <li><a href="index.html#q6">Question 6: Count Change (with Linked Lists!)</a></li>
+              </ul>
+
+            </ul>
+
+          </nav>
+        </div>
+
+      </div>
+    </div>
+  </body>
+  <script>
+    $('.sidebar ul').addClass('nav nav-stacked');
+    $('body').scrollspy({
+      target: '.sidebar',
+      offset: 40
+    });
+  </script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script>
+    $(function() {
+      if (new Date("07/10/2015") < new Date()) {
+        $('.toggleButton').css('display', 'inline-block');
+        $('.toggleButton').click(function() {
+          var solution_id = $(this).attr('id');
+          $('div.' + solution_id).slideToggle(600);
+        });
+      }
+      // Always display these toggle buttons
+      $('.toggleButtonShow').click(function() {
+        var solution_id = $(this).attr('id');
+        $('div.' + solution_id).slideToggle(600);
+      });
+    });
+  </script>
+</html>
+
+  </script>
+</html>
